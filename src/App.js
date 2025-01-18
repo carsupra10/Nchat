@@ -47,7 +47,7 @@ const App = () => {
   }
 
   return (
-    <div className="flex h-screen relative">
+    <div className="flex h-screen relative bg-gray-50">
       {/* Mobile Menu Button */}
       <button
         onClick={toggleSidebar}
@@ -56,11 +56,12 @@ const App = () => {
         ☰
       </button>
 
-      {/* Sidebar with mobile responsive classes */}
+      {/* Updated Sidebar with transitions */}
       <div className={`
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         md:translate-x-0 transform transition-transform duration-300 ease-in-out
         fixed md:static left-0 top-0 h-full z-40
+        md:min-w-[18rem] w-72
       `}>
         <Sidebar
           groups={groups}
@@ -74,27 +75,32 @@ const App = () => {
         />
       </div>
 
-      {/* Overlay for mobile */}
+      {/* Main Chat Area */}
+      <div className="flex-1 relative">
+        {activeGroup ? (
+          <Chat
+            socket={socket}
+            groupName={activeGroup}
+            username={user.username}
+            onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          />
+        ) : (
+          <div className="h-full flex flex-col items-center justify-center bg-gray-50">
+            <div className="text-center">
+              <h2 className="text-2xl font-semibold text-gray-700 mb-2">Welcome to Nchat</h2>
+              <p className="text-gray-500">Select a group to start chatting</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
           className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
-
-      <div className="flex-1">
-        {activeGroup ? (
-          <Chat
-            socket={socket}
-            groupName={activeGroup}
-            username={user.username}
-          />
-        ) : (
-          <div className="h-full flex items-center justify-center bg-gray-100">
-            <p className="text-xl text-gray-500">Select a group to start chatting</p>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
