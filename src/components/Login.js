@@ -8,15 +8,50 @@ const Login = ({ onLogin, socket }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Check if device is already registered
-    const savedDeviceId = localStorage.getItem('deviceId');
-    const savedUsername = localStorage.getItem('username');
-    if (savedDeviceId && savedUsername) {
-      setDeviceId(savedDeviceId);
-      setUsername(savedUsername);
-      setIsNewUser(false);
-    }
-  }, []);
+    const checkDevice = async () => {
+      try {
+        // Get device info
+        const deviceInfo = {
+          userAgent: navigator.userAgent,
+          language: navigator.language,
+          platform: navigator.platform,
+          screenResolution: `${window.screen.width}x${window.screen.height}`,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        };
+
+        // Create a unique device fingerprint
+        const fingerprint = await generateDeviceFingerprint(deviceInfo);
+        
+        const savedDeviceId = localStorage.getItem('deviceId');
+        const savedUsername = localStorage.getItem('username');
+        
+        if (savedDeviceId && savedUsername) {
+          setDeviceId(savedDeviceId);
+          setUsername(savedUsername);
+          setIsNewUser(false);
+          
+          // Verify device fingerprint
+          socket.emit('verify_device', {
+            deviceId: savedDeviceId,
+            fingerprint,
+            deviceInfo
+          });
+        }
+      } catch (error) {
+        console.error('Error checking device:', error);
+      }
+    };
+
+    checkDevice();
+  }, [socket]);
+
+  const generateDeviceFingerprint = async (deviceInfo) => {
+    const data = JSON.stringify(deviceInfo);
+    const msgBuffer = new TextEncoder().encode(data);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  };
 
   useEffect(() => {
     socket.on('login_response', (response) => {

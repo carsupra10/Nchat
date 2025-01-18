@@ -121,10 +121,59 @@ async function loadGroupMessages(groupName) {
   }
 }
 
+// Add device verification
+const verifyDevice = async (deviceId, fingerprint, deviceInfo) => {
+  try {
+    if (!registeredUsers[deviceId]) return false;
+
+    const userDevice = registeredUsers[deviceId];
+    
+    // Check if fingerprint matches
+    if (!userDevice.fingerprint) {
+      userDevice.fingerprint = fingerprint;
+      userDevice.deviceInfo = deviceInfo;
+      await saveData();
+      return true;
+    }
+
+    // Compare device info for VPN detection
+    const significantChanges = detectSignificantChanges(userDevice.deviceInfo, deviceInfo);
+    if (significantChanges) {
+      console.log(`Suspicious login attempt for device ${deviceId}`);
+      return false;
+    }
+
+    return userDevice.fingerprint === fingerprint;
+  } catch (error) {
+    console.error('Device verification error:', error);
+    return false;
+  }
+};
+
+const detectSignificantChanges = (oldInfo, newInfo) => {
+  // Check for suspicious changes that might indicate VPN
+  const criticalChanges = [
+    oldInfo.platform !== newInfo.platform,
+    oldInfo.screenResolution !== newInfo.screenResolution,
+    oldInfo.language !== newInfo.language
+  ];
+
+  return criticalChanges.filter(Boolean).length >= 2;
+};
+
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
 
-  socket.on('register', ({ deviceId, username }) => {
+  // Add device verification handler
+  socket.on('verify_device', async ({ deviceId, fingerprint, deviceInfo }) => {
+    const isValid = await verifyDevice(deviceId, fingerprint, deviceInfo);
+    socket.emit('device_verification', { success: isValid });
+  });
+
+  socket.on('register', async ({ deviceId, username, deviceInfo }) => {
+    // Add fingerprint generation
+    const fingerprint = await generateDeviceFingerprint(deviceInfo);
+    
     if (registeredUsers[deviceId]) {
       socket.emit('login_response', {
         success: false,
@@ -135,7 +184,9 @@ io.on('connection', (socket) => {
 
     registeredUsers[deviceId] = {
       username,
-      lastSeen: Date.now()
+      lastSeen: Date.now(),
+      fingerprint,
+      deviceInfo
     };
 
     users[socket.id] = {
