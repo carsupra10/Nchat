@@ -1,0 +1,52 @@
+[
+  {
+    "message": "Adhi joined the group",
+    "sender": "System",
+    "timestamp": 1737220840594
+  },
+  {
+    "message": "Adhi joined the group",
+    "sender": "System",
+    "timestamp": 1737220840595
+  },
+  {
+    "message": "hi",
+    "username": "Adhi",
+    "timestamp": 1737220843687
+  },
+  {
+    "message": "thara joined the group",
+    "sender": "System",
+    "timestamp": 1737220846590
+  },
+  {
+    "message": "hi",
+    "username": "thara",
+    "timestamp": 1737220848555
+  },
+  {
+    "message": "how are u",
+    "username": "Adhi",
+    "timestamp": 1737220855673
+  },
+  {
+    "message": "ok",
+    "username": "thara",
+    "timestamp": 1737220860385
+  },
+  {
+    "message": "hmm",
+    "username": "Adhi",
+    "timestamp": 1737220865226
+  },
+  {
+    "message": "Admin joined the group",
+    "sender": "System",
+    "timestamp": 1737221171205
+  },
+  {
+    "message": "hi",
+    "username": "Admin",
+    "timestamp": 1737221173624
+  }
+]

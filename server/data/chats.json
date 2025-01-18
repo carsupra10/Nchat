@@ -1,0 +1,36 @@
+{
+  "messages": {
+    "#hi": [
+      {
+        "message": "hi",
+        "username": "adhi",
+        "timestamp": 1737220382680
+      },
+      {
+        "message": "hi",
+        "username": "thara",
+        "timestamp": 1737220394697
+      },
+      {
+        "message": "hi 👋",
+        "username": "adhi",
+        "timestamp": 1737220424746
+      },
+      {
+        "message": "oii thangoo",
+        "username": "thara",
+        "timestamp": 1737220437096
+      }
+    ],
+    "Adult": [],
+    "Tamil": [],
+    "🔞": [],
+    "General": [
+      {
+        "message": "hi",
+        "username": "Adhi",
+        "timestamp": 1737220811928
+      }
+    ]
+  }
+}
