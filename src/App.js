@@ -4,7 +4,26 @@ import Login from './components/Login';
 import Chat from './components/Chat';
 import Sidebar from './components/Sidebar';
 
-const socket = io('https://grizzly-improved-scarcely.ngrok-free.app');
+// Update socket connection with options
+const socket = io('https://grizzly-improved-scarcely.ngrok-free.app', {
+  transports: ['websocket', 'polling'],
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+});
+
+// Add connection status monitoring
+socket.on('connect', () => {
+  console.log('Connected to server');
+});
+
+socket.on('connect_error', (error) => {
+  console.error('Connection error:', error);
+});
+
+socket.on('disconnect', (reason) => {
+  console.log('Disconnected:', reason);
+});
 
 const App = () => {
   const [user, setUser] = useState(null);

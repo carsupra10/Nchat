@@ -6,10 +6,21 @@ const path = require('path');
 
 const app = express();
 const httpServer = createServer(app);
+
+// Update CORS configuration
 const io = new Server(httpServer, {
   cors: {
-    origin: '*',
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["*"],
+    credentials: true
   },
+  transports: ['websocket', 'polling']
+});
+
+// Add basic Express route for testing
+app.get('/', (req, res) => {
+  res.send('Server is running');
 });
 
 // File paths
@@ -276,6 +287,8 @@ setInterval(() => {
   saveData();
 }, 60 * 60 * 1000);
 
-httpServer.listen(3001, () => {
-  console.log('Server running on http://localhost:3001');
+// Update port to use environment variable
+const PORT = process.env.PORT || 3001;
+httpServer.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });

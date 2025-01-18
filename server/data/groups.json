@@ -1,27 +1,3 @@
 {
-  "groups": {
-    "General": {
-      "members": [
-        "tnGDJLqMXxS0ufLUAAAJ",
-        "4cMveFJdHob2dsldAAAJ",
-        "GQgWiTOoF79M6VkPAAAJ",
-        "zDIjhtQg41fLXfJDAAAF",
-        "WU0N1AZq2DNUmXb7AAAF",
-        "LPdXdDfTZUvfJXVOAAAP"
-      ],
-      "createdAt": 1737220377499
-    },
-    "Adult": {
-      "members": [],
-      "createdAt": 1737220644045
-    },
-    "Tamil": {
-      "members": [],
-      "createdAt": 1737220647812
-    },
-    "🔞": {
-      "members": [],
-      "createdAt": 1737220676086
-    }
-  }
+  "groups": {}
 }

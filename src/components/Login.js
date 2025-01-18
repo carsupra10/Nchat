@@ -32,6 +32,20 @@ const Login = ({ onLogin, socket }) => {
     return () => socket.off('login_response');
   }, [socket, onLogin]);
 
+  useEffect(() => {
+    // Add connection status handling
+    const handleConnect = () => setError('');
+    const handleError = () => setError('Unable to connect to server');
+
+    socket.on('connect', handleConnect);
+    socket.on('connect_error', handleError);
+
+    return () => {
+      socket.off('connect', handleConnect);
+      socket.off('connect_error', handleError);
+    };
+  }, [socket]);
+
   const handleSignup = () => {
     if (!username.trim()) return;
     const newDeviceId = uuidv4();
