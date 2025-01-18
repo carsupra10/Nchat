@@ -83,5 +83,35 @@
     "message": "hi",
     "username": "Admin",
     "timestamp": 1737223343487
+  },
+  {
+    "message": "Admin joined the group",
+    "sender": "System",
+    "timestamp": 1737223685332
+  },
+  {
+    "message": "hi",
+    "username": "Admin",
+    "timestamp": 1737223755081
+  },
+  {
+    "message": "Adhi joined the group",
+    "sender": "System",
+    "timestamp": 1737223763992
+  },
+  {
+    "message": "Hi",
+    "username": "Adhi",
+    "timestamp": 1737223769421
+  },
+  {
+    "message": "Adhi joined the group",
+    "sender": "System",
+    "timestamp": 1737223906735
+  },
+  {
+    "message": "Oii akkow",
+    "username": "Adhi",
+    "timestamp": 1737223911658
   }
 ]

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const Chat = ({ socket, groupName, username, onMenuClick }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const messagesEndRef = React.useRef(null);
+  const chatContainerRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -22,6 +24,25 @@ const Chat = ({ socket, groupName, username, onMenuClick }) => {
       socket.emit('leave_group', groupName);
     };
   }, [socket, groupName]);
+
+  useEffect(() => {
+    const visualViewport = window.visualViewport;
+    
+    const handleResize = () => {
+      if (visualViewport.height < window.innerHeight) {
+        setIsKeyboardOpen(true);
+        // Adjust scroll when keyboard opens
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100);
+      } else {
+        setIsKeyboardOpen(false);
+      }
+    };
+
+    visualViewport?.addEventListener('resize', handleResize);
+    return () => visualViewport?.removeEventListener('resize', handleResize);
+  }, []);
 
   const sendMessage = () => {
     if (message.trim()) {
@@ -65,7 +86,7 @@ const Chat = ({ socket, groupName, username, onMenuClick }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col h-screen bg-gray-100" ref={chatContainerRef}>
       <div className="bg-white p-4 shadow-md flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div>
@@ -85,7 +106,9 @@ const Chat = ({ socket, groupName, username, onMenuClick }) => {
         </button>
       </div>
       
-      <div className="flex-1 p-2 md:p-4 overflow-y-auto">
+      <div className={`flex-1 p-2 md:p-4 overflow-y-auto ${
+        isKeyboardOpen ? 'pb-0' : 'pb-4'
+      }`}>
         <div className="space-y-2">
           {messages.map((msg, index) => (
             <MessageBubble key={index} msg={msg} />
@@ -94,12 +117,15 @@ const Chat = ({ socket, groupName, username, onMenuClick }) => {
         </div>
       </div>
 
-      <div className="p-4 bg-white border-t">
+      <div className={`p-4 bg-white border-t ${
+        isKeyboardOpen ? 'pb-safe' : ''
+      }`}>
         <div className="flex space-x-2 items-center max-w-4xl mx-auto">
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onFocus={() => scrollToBottom()}
             onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
             placeholder="Type a message..."
             className="flex-1 p-3 border rounded-full focus:outline-none focus:border-blue-500"

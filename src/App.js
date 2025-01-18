@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import Login from './components/Login';
 import Chat from './components/Chat';
@@ -31,9 +31,51 @@ const App = () => {
   const [activeGroup, setActiveGroup] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     socket.on('group_list', setGroups);
     return () => socket.off('group_list');
+  }, []);
+
+  useEffect(() => {
+    const enableFullScreen = async () => {
+      try {
+        if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen && !document.webkitFullscreenElement) {
+          await document.documentElement.webkitRequestFullscreen();
+        }
+      } catch (err) {
+        console.log('Fullscreen request failed:', err);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        enableFullScreen();
+      }
+    };
+
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      enableFullScreen();
+    }
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  // Add CSS variables for safe areas
+  useEffect(() => {
+    const setVHProperty = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    window.addEventListener('resize', setVHProperty);
+    setVHProperty();
+
+    return () => window.removeEventListener('resize', setVHProperty);
   }, []);
 
   const handleCreateGroup = (groupName) => {
@@ -47,7 +89,7 @@ const App = () => {
   }
 
   return (
-    <div className="flex h-screen relative bg-gray-50">
+    <div className="flex h-screen relative bg-gray-50" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
       {/* Mobile Menu Button */}
       <button
         onClick={toggleSidebar}

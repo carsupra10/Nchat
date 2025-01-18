@@ -14,11 +14,27 @@
     },
     "95a1f9f9-d5b8-4dba-9781-334399982d9b": {
       "username": "Admin",
-      "lastSeen": 1737223273886
+      "lastSeen": 1737223683532,
+      "fingerprint": "fb8cf0ae77e36563bc4c16a8f3865abe4a036d40ef89b1c7902b994f176f4625",
+      "deviceInfo": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        "language": "en-IN",
+        "platform": "MacIntel",
+        "screenResolution": "1792x1120",
+        "timezone": "Asia/Calcutta"
+      }
     },
     "3b6dfe9a-e1dd-4444-a0e2-621306d289a6": {
       "username": "Adhi",
-      "lastSeen": 1737223332484
+      "lastSeen": 1737223903974,
+      "fingerprint": "adcf77cd84d4250809e7783c36d10f15890a3afbe38bf5524eab7b9e6e71fb39",
+      "deviceInfo": {
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36",
+        "language": "en-US",
+        "platform": "Linux armv81",
+        "screenResolution": "360x800",
+        "timezone": "Asia/Calcutta"
+      }
     }
   }
 }
