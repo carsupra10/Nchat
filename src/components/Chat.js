@@ -4,8 +4,10 @@ const Chat = ({ socket, groupName, username, onMenuClick }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const messagesEndRef = React.useRef(null);
   const chatContainerRef = useRef(null);
+  const headerRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -29,19 +31,31 @@ const Chat = ({ socket, groupName, username, onMenuClick }) => {
     const visualViewport = window.visualViewport;
     
     const handleResize = () => {
-      if (visualViewport.height < window.innerHeight) {
-        setIsKeyboardOpen(true);
-        // Adjust scroll when keyboard opens
-        setTimeout(() => {
-          scrollToBottom();
-        }, 100);
+      if (!visualViewport) return;
+      
+      const viewport = {
+        height: visualViewport.height,
+        offsetTop: visualViewport.offsetTop,
+      };
+
+      if (viewport.height < window.innerHeight) {
+        // Keyboard is open
+        const heightDiff = window.innerHeight - viewport.height;
+        setKeyboardHeight(heightDiff);
+        // Adjust scroll position
+        scrollToBottom();
       } else {
-        setIsKeyboardOpen(false);
+        setKeyboardHeight(0);
       }
     };
 
     visualViewport?.addEventListener('resize', handleResize);
-    return () => visualViewport?.removeEventListener('resize', handleResize);
+    visualViewport?.addEventListener('scroll', handleResize);
+
+    return () => {
+      visualViewport?.removeEventListener('resize', handleResize);
+      visualViewport?.removeEventListener('scroll', handleResize);
+    };
   }, []);
 
   const sendMessage = () => {
@@ -86,30 +100,41 @@ const Chat = ({ socket, groupName, username, onMenuClick }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100" ref={chatContainerRef}>
-      <div className="bg-white p-4 shadow-md flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div>
-            <h2 className="text-xl font-semibold">#{groupName}</h2>
-            <p className="text-sm text-gray-500">
-              {messages.filter(m => m.sender !== 'System').length} messages today
-            </p>
+    <div className="flex flex-col h-screen bg-gray-100 relative">
+      {/* Fixed Header */}
+      <div 
+        ref={headerRef}
+        className="fixed top-0 left-0 right-0 bg-white shadow-md z-10"
+      >
+        <div className="p-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div>
+              <h2 className="text-xl font-semibold">#{groupName}</h2>
+              <p className="text-sm text-gray-500">
+                {messages.filter(m => m.sender !== 'System').length} messages today
+              </p>
+            </div>
           </div>
+          <button
+            onClick={onMenuClick}
+            className="md:hidden p-2 hover:bg-gray-100 rounded-full"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </button>
         </div>
-        <button
-          onClick={onMenuClick}
-          className="md:hidden p-2 hover:bg-gray-100 rounded-full"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-          </svg>
-        </button>
       </div>
-      
-      <div className={`flex-1 p-2 md:p-4 overflow-y-auto ${
-        isKeyboardOpen ? 'pb-0' : 'pb-4'
-      }`}>
-        <div className="space-y-2">
+
+      {/* Messages Area with dynamic padding for header */}
+      <div 
+        className="flex-1 overflow-y-auto"
+        style={{ 
+          paddingTop: headerRef.current ? headerRef.current.offsetHeight : '73px',
+          paddingBottom: keyboardHeight > 0 ? '60px' : '80px'
+        }}
+      >
+        <div className="p-4 space-y-2">
           {messages.map((msg, index) => (
             <MessageBubble key={index} msg={msg} />
           ))}
@@ -117,27 +142,34 @@ const Chat = ({ socket, groupName, username, onMenuClick }) => {
         </div>
       </div>
 
-      <div className={`p-4 bg-white border-t ${
-        isKeyboardOpen ? 'pb-safe' : ''
-      }`}>
-        <div className="flex space-x-2 items-center max-w-4xl mx-auto">
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onFocus={() => scrollToBottom()}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Type a message..."
-            className="flex-1 p-3 border rounded-full focus:outline-none focus:border-blue-500"
-          />
-          <button
-            onClick={sendMessage}
-            className="p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-          </button>
+      {/* Input Area */}
+      <div 
+        className={`fixed bottom-0 left-0 right-0 bg-white border-t`}
+        style={{
+          transform: `translateY(${keyboardHeight > 0 ? -keyboardHeight : 0}px)`,
+          transition: 'transform 0.3s ease-out'
+        }}
+      >
+        <div className="p-2">
+          <div className="flex space-x-2 items-center max-w-4xl mx-auto">
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onFocus={() => scrollToBottom()}
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="Type a message..."
+              className="flex-1 p-3 border rounded-full focus:outline-none focus:border-blue-500"
+            />
+            <button
+              onClick={sendMessage}
+              className="p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>

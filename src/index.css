@@ -9,6 +9,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 code {
@@ -19,6 +24,7 @@ code {
 /* Add these to your existing CSS */
 @supports (-webkit-touch-callout: none) {
   .h-screen {
+    height: 100vh; /* Fallback */
     height: -webkit-fill-available;
   }
 }
@@ -44,4 +50,20 @@ html, body {
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
+}
+
+/* Add to your existing CSS */
+@layer utilities {
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Smooth transitions for keyboard */
+.chat-container {
+  transition: all 0.3s ease-out;
 }
