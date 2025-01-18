@@ -48,5 +48,15 @@
     "message": "hi",
     "username": "Admin",
     "timestamp": 1737221173624
+  },
+  {
+    "message": "Admin joined the group",
+    "sender": "System",
+    "timestamp": 1737221783502
+  },
+  {
+    "message": "hi",
+    "username": "Admin",
+    "timestamp": 1737221785922
   }
 ]

@@ -4,7 +4,7 @@ import Login from './components/Login';
 import Chat from './components/Chat';
 import Sidebar from './components/Sidebar';
 
-const socket = io('http://localhost:3001');
+const socket = io('https://grizzly-improved-scarcely.ngrok-free.app');
 
 const App = () => {
   const [user, setUser] = useState(null);
