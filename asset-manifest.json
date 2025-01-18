@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Nchat/static/css/main.9aef4628.css",
-    "main.js": "/Nchat/static/js/main.5c313c6b.js",
+    "main.css": "/Nchat/static/css/main.29d79a8e.css",
+    "main.js": "/Nchat/static/js/main.919b44de.js",
     "static/js/488.d9e1fca9.chunk.js": "/Nchat/static/js/488.d9e1fca9.chunk.js",
     "index.html": "/Nchat/index.html",
-    "main.9aef4628.css.map": "/Nchat/static/css/main.9aef4628.css.map",
-    "main.5c313c6b.js.map": "/Nchat/static/js/main.5c313c6b.js.map",
+    "main.29d79a8e.css.map": "/Nchat/static/css/main.29d79a8e.css.map",
+    "main.919b44de.js.map": "/Nchat/static/js/main.919b44de.js.map",
     "488.d9e1fca9.chunk.js.map": "/Nchat/static/js/488.d9e1fca9.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9aef4628.css",
-    "static/js/main.5c313c6b.js"
+    "static/css/main.29d79a8e.css",
+    "static/js/main.919b44de.js"
   ]
 }
